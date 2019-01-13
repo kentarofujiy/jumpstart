@@ -25,6 +25,33 @@ def add_template_repository_to_source_path
   end
 end
 
+def database_file
+  database_file = <<-FILE
+default: &default
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+
+development:
+  <<: *default
+  database: db/development.sqlite3
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  database: db/test.sqlite3
+
+production:
+  <<: *default
+  database: db/production.sqlite3
+FILE
+
+create_file 'config/database.yml', ERB.new(database_file).result(binding), force: true
+  
+end
+
 def add_gems
   gem 'administrate', '~> 0.10.0'
   gem 'bootstrap', '~> 4.1', '>= 4.1.1'
@@ -47,6 +74,23 @@ def add_gems
   gem 'sitemap_generator', '~> 6.0', '>= 6.0.1'
   gem 'webpacker', '~> 3.5', '>= 3.5.3'
   gem 'whenever', require: false
+  gem 'simple_form'
+  gem 'draper'
+
+gem_group :development, :test do
+  gem 'spring'
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'quiet_assets'
+  gem 'pry-rails'
+  gem 'bullet'
+  gem 'traceroute'
+  gem 'letter_opener'
+  gem 'sqlite3'
+end
+gem_group :production do
+  gem 'pg'
+end
 end
 
 def set_application_name
@@ -220,8 +264,13 @@ end
 
 # Main setup
 add_template_repository_to_source_path
+database_file
+
 
 add_gems
+
+run "bundle install"
+generate simple_form_installation
 
 after_bundle do
   set_application_name
