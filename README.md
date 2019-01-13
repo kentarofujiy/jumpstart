@@ -1,4 +1,4 @@
-# Rails Jumpstart
+gihm# Rails Jumpstart
 
 It's like Laravel Spark, for Rails. All your Rails apps should start off with a bunch of great defaults.
 
