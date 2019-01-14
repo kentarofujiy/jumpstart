@@ -13,7 +13,7 @@ def add_template_repository_to_source_path
     at_exit { FileUtils.remove_entry(tempdir) }
     git clone: [
       "--quiet",
-      "https://github.com/excid3/jumpstart.git",
+      "https://github.com/kentarofujiy/jumpstart.git",
       tempdir
     ].map(&:shellescape).join(" ")
 
@@ -25,8 +25,23 @@ def add_template_repository_to_source_path
   end
 end
 
-def add_gems
-  gem 'administrate', '~> 0.10.0'
+def swap_gemfile 
+  new_gemfile = <<-FILE 
+  source 'https://rubygems.org'
+
+
+
+ruby '2.4.0'
+
+gem 'rails'
+gem 'puma', '~> 3.11'
+gem 'sass-rails', '~> 5.0'
+gem 'uglifier', '>= 1.3.0'
+gem 'coffee-rails', '~> 4.2'
+gem 'turbolinks', '~> 5'
+gem 'jbuilder', '~> 2.5'
+
+  gem 'administrate'
   gem 'bootstrap', '~> 4.1', '>= 4.1.1'
   gem 'data-confirm-modal', '~> 1.6', '>= 1.6.2'
   gem 'devise', '~> 4.4', '>= 4.4.3'
@@ -47,6 +62,68 @@ def add_gems
   gem 'sitemap_generator', '~> 6.0', '>= 6.0.1'
   gem 'webpacker', '~> 3.5', '>= 3.5.3'
   gem 'whenever', require: false
+  gem 'simple_form'
+  gem 'draper'
+group :development, :test do
+  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'quiet_assets'
+  gem 'pry-rails'
+  gem 'bullet'
+  gem 'traceroute'
+  gem 'letter_opener'
+  gem 'sqlite3'
+end
+
+group :development do
+  gem 'web-console', '>= 3.3.0'
+  gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'spring'
+  gem 'spring-watcher-listen', '~> 2.0.0'
+end
+
+group :test do
+  gem 'capybara', '>= 2.15'
+  gem 'selenium-webdriver'
+  gem 'chromedriver-helper'
+end
+
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+FILE
+create_file 'Gemfile', ERB.new(new_gemfile).result(binding), force: true
+end
+
+def database_file
+  database_file = <<-FILE
+default: &default
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+
+development:
+  <<: *default
+  database: db/development.sqlite3
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  database: db/test.sqlite3
+
+production:
+  <<: *default
+  database: db/production.sqlite3
+FILE
+
+create_file 'config/database.yml', ERB.new(database_file).result(binding), force: true
+  
+end
+
+def add_gems
+  
+
 end
 
 def set_application_name
@@ -219,9 +296,15 @@ def add_sitemap
 end
 
 # Main setup
+
+swap_gemfile
+database_file
 add_template_repository_to_source_path
 
-add_gems
+#add_gems
+
+run "bundle install"
+generate simple_form_installation
 
 after_bundle do
   set_application_name
@@ -256,3 +339,4 @@ after_bundle do
   git add: "."
   git commit: %Q{ -m 'Initial commit' }
 end
+cdd
