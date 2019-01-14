@@ -219,7 +219,7 @@ end
 
 # Main setup
 add_template_repository_to_source_path
-
+bundle install
 add_gems
 
 after_bundle do
