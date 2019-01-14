@@ -36,7 +36,6 @@ def add_gems
   gem 'foreman', '~> 0.84.0'
   gem 'friendly_id', '~> 5.2', '>= 5.2.4'
   gem 'gravatar_image_tag', github: 'mdeering/gravatar_image_tag'
-  gem 'jquery-rails', '~> 4.3.1'
   gem 'local_time', '~> 2.0', '>= 2.0.1'
   gem 'mini_magick', '~> 4.8'
   gem 'name_of_person', '~> 1.0'
