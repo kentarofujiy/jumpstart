@@ -45,6 +45,7 @@ def add_gems
   gem 'sidekiq', '~> 5.1', '>= 5.1.3'
   gem 'sitemap_generator', '~> 6.0', '>= 6.0.1'
   gem 'webpacker', '~> 3.5', '>= 3.5.3'
+  gem 'nested_scaffold'
   gem 'whenever', require: false
 end
 
@@ -195,6 +196,14 @@ def add_multiple_authentication
           before: "  # ==> Warden configuration"
 end
 
+def scaffold_posts
+  generate "scaffold Post title:string subject:string body:text"
+end
+
+def scaffold_comments
+  generate "nested_scaffold Post/Comment title:string body:text
+end 
+
 def add_whenever
   run "wheneverize ."
 end
@@ -249,6 +258,17 @@ after_bundle do
 
   add_sitemap
 
+  scaffold_posts
+ 
+   # Migrate
+  rails_command "db:create"
+  rails_command "db:migrate"
+ 
+   scaffold_comments
+
+  # Migrate
+  rails_command "db:create"
+  rails_command "db:migrate"
 
   git :init
   git add: "."
