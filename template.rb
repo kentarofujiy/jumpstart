@@ -201,7 +201,7 @@ def scaffold_posts
 end
 
 def scaffold_comments
-  generate "nested_scaffold Post/Comment title:string body:text
+  generate "nested_scaffold Post/Comment title:string body:text"
 end 
 
 def add_whenever
