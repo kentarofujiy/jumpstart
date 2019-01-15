@@ -260,14 +260,11 @@ after_bundle do
 
   scaffold_posts
  
-   # Migrate
-  rails_command "db:create"
   rails_command "db:migrate"
  
-   scaffold_comments
+  scaffold_comments
 
-  # Migrate
-  rails_command "db:create"
+
   rails_command "db:migrate"
 
   git :init
